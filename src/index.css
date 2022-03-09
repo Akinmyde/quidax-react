@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Ubuntu', 'Segoe UI';
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+p,h1,h2,h3{
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Ubuntu', 'Segoe UI';
+  font-style: normal;
+}
+
+a {
+  text-decoration: none;
+}
+
+code {
+  font-family: 'Ubuntu', 'Courier New', monospace;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+}
