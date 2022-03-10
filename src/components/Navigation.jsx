@@ -5,7 +5,7 @@ import { ReactComponent as Search } from '../assets/svgs/search.svg';
 import { ReactComponent as BookSvg } from '../assets/svgs/books.svg';
 import { ReactComponent as CartSvg } from '../assets/svgs/cart.svg';
 import { ReactComponent as CloseSvg } from '../assets/svgs/close.svg';
-import { screenSizes, colors } from '../utils/constants';
+import { screenSizes, colors } from '../constants';
 import { BookContext } from '../context/BookContext';
 import { Link } from 'react-router-dom';
 

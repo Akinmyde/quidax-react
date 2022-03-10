@@ -7,14 +7,13 @@ import { ReactComponent as HeeartSvg } from '../assets/svgs/heart.svg';
 
 import { AddToCartButton } from '../components/Button';
 import { Text } from '../components/Text';
-import { colors, screenSizes } from '../utils/constants';
+import { colors, screenSizes } from '../constants';
 import StarRatings from 'react-star-ratings';
 import { GET_BOOK } from '../graphql/queries';
 import { useParams, Link } from 'react-router-dom';
 import { ReactComponent as CartSvg } from '../assets/svgs/cartWhite.svg';
-import { addToCart, getAvailableCopies, returnArrayText } from '../utils/helpers';
+import { addToCart, getAvailableCopies, returnArrayText } from '../helpers';
 import { BookContext } from '../context/BookContext';
-import moment from 'moment';
 import { useQuery } from '@apollo/client';
 import { useViewport } from '../hooks/useViewport';
 
@@ -248,7 +247,7 @@ const DetailsScreen = () => {
                     <BookDetailsFlex direction='column'>
                       <Text fontWeight="bold">Released</Text>
                       <Text>
-                        {moment(release_date).format('d MMMM, YYYY')}
+                        {new Date(release_date).toDateString()}
                       </Text>
                     </BookDetailsFlex>
                   </BookDetailsFlex>
@@ -303,7 +302,7 @@ const DetailsScreen = () => {
                       <BookDetailsFlex direction='column'>
                         <Text fontWeight="bold">Released</Text>
                         <Text>
-                          {moment(release_date).format('d MMMM, YYYY')}
+                        {new Date(release_date).toDateString()}
                         </Text>
                       </BookDetailsFlex>
                     </BookDetailsFlex>

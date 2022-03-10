@@ -1,88 +1,50 @@
-## After cloning
 
-In the project directory you can run:
+# Project Setup
 
-### `yarn install or npm install` 
+## Requirement
+You need to have React and npm/yarn installed on your computer to run this source code on your computer. 
 
-to install dependencies
+## Production App URL
+```
+https://quidax-react.netlify.app/
+```
+## Cloning the project
 
-##  Assumptions regarding assessment
+```
+git clone https://github.com/Akinmyde/quidax-react.git
+```
 
-for a small project like this I used context api for the state management instead of redux,
-also to show empty states i went ahead to use text explanation instead to images.
+## Installing all dependencies required
 
-## Requirments not covered
+In the project root directory run:
+```
+run npm install or yarn install
+```
 
-I met all functional requirements apart from a particular hover animation that is seen when hovering an image , because I ran put of time.
+## Starting the App IOS
+```
+yarn start
+```
 
-## Issues faced while completing the assignment
+# Assumptions
+I make use of React Context to manage my state. Especially the part of persisting the cart. An alternative would have been making use of a store like redux or perhaps using local storage.
 
-the most difficult issue i faced was the filtering , it took me a while to figure it out, but figure it out i did.
-I also struggled a bit to find the right customisable carousel to use.
+I make use of Context API because I really don't want to add another layer of obfuscation to the code. I see the application as a basic one since I only need to manage a few states and data.
 
-## Available Scripts
+Also, I make use of the GraphQL API to get a single book. Although, I can always pass the current book as props and not make the API call I thought it was required to make use of both GraphQL APIs in this assessment. Also, I did that because I don't really know how often the data changes so it's important to always show the updated information by getting it in real-time from the server.
 
-In the project directory, you can run:
 
-### `npm start`
+# Requirements
+Due to time, I was not able to perfectly implement the search feature to my taste and the taste of the requirements. Although, it is hard to notice that something is off.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+I believe that I met all requirements but I wasn't able to implement the slider to match exactly what we have in the mockup. Also, if I had more time, I would have done some refactoring to improve the search experience and also add a skeleton loader to all pages
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Issues Faced
+The main issue is faced completing this assessment is time. due to my current tight schedule, I was only able to dedicate a few hours of my time to this assessment.
 
-### `npm test`
+Also, I had to design the carousel from scratch myself at first then I realize that it was going to take me more time to complete. because of this, I had to switch to using a library for the carousel.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Feedback
+I think the Figma design should give applicants the privilege to view the margin, padding, fonts and colours from each layout.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+It might be a bit difficult to size the spacing (margin and padding) with the eye or hand. tools like colour picker could help pick the colour for a particular section, but they aren't 100% efficient

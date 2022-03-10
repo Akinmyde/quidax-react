@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as Search } from '../assets/svgs/search.svg';
 import { ReactComponent as CloseSvg } from '../assets/svgs/close.svg';
@@ -7,62 +7,48 @@ import { ReactComponent as PlusSvg } from '../assets/svgs/plus.svg';
 import { ReactComponent as CartSvg } from '../assets/svgs/cart.svg';
 import { ReactComponent as ArrowSvg } from '../assets/svgs/arrow.svg';
 import { gsap } from 'gsap';
-import { screenSizes, colors } from '../utils/constants';
+import { screenSizes, colors } from '../constants';
 import { CheckoutButton } from './Button';
 import { HeadTitle } from '../screens/HomeScreen';
 import { BookContext } from '../context/BookContext';
 import Navigation from './Navigation';
-import { getAvailableCopies, removeFromCart } from '../utils/helpers';
+import { getAvailableCopies, removeFromCart } from '../helpers';
 import { Book } from './Book';
 import { BookWrapper, BooksRowWrapper, TitleWrappper, BookPaddingContianer } from './Containers';
 
-const MobileModal = styled.div`
+const ModalContainer = styled.div`
   position: fixed;
-  display: ${({ visible }) => (visible ? 'block' : 'none')};
   z-index: 2;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: ${({ showWHiteBg }) => showWHiteBg ? 'rgba(255, 255, 255, 0)' : 'rgba(0, 0, 0, 0.4)'} ;
-  @media (min-width: ${screenSizes.tabs}px) {
-    display:none;
-  }
-`;
-
-const WebModal = styled.div`
-  position: fixed;
-  display: ${({ visible }) => (visible ? 'block' : 'none')};
-  z-index: 2;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(255, 255, 255);
-  background-color: rgba(255, 255, 255, 1);
   @media (max-width: ${screenSizes.tabs}px) {
     display:none;
   }
 `;
 
-const CartModalWrap = styled.div`
-  position: fixed;
+
+const MobileModalWrapper = styled(ModalContainer)`
+  display: ${({ visible }) => (visible ? 'block' : 'none')};
+  background-color: ${({ showWHiteBg }) => showWHiteBg ? 'rgba(255, 255, 255, 0)' : 'rgba(0, 0, 0, 0.4)'} ;
+`;
+
+const WebViewModalWrapper = styled(ModalContainer)`
+  display: ${({ visible }) => (visible ? 'block' : 'none')};
+  background-color: rgba(255, 255, 255, 1);
+`;
+
+const CartModalWrap = styled(ModalContainer)`
   display: ${({ visible }) => (visible ? 'flex' : 'none')};
-  z-index: 2;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.4);
   justify-content: flex-end;
-  flex-direction:column;
+  flex-direction: column;
 `;
 
-const SearchWrap = styled.div`
+const SearchViewWrapper = styled.div`
   width: 90%;
   display: flex;
   justify-content: space-between;
@@ -115,7 +101,7 @@ const CartNavCont = styled.div`
 `;
 
 const ArrowWrap = styled(ArrowSvg)`
-      cursor: pointer;
+  cursor: pointer;
 `;
 
 const Row = styled.div`
@@ -285,7 +271,6 @@ const SubtotalWrap = styled.div`
 `;
 
 const Wrapper = styled.div`
-  max-width: 1140px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -299,7 +284,7 @@ export const SearchModal = ({ visible, setVisible }) => {
   const alwaysOpen = true;
   const { searchText, setSearchText, bookData } = useContext(BookContext);
 
-
+  const [filteredBooks, setFilteredBooks] = useState([]);
 
   useEffect(() => {
     gsap.fromTo(header.current, { y: -100 }, { y: 0 });
@@ -310,35 +295,31 @@ export const SearchModal = ({ visible, setVisible }) => {
     setVisible(false);
   }
 
-  const filteredBooks = applyFilters(bookData) || [];
-
-
-  function applyFilters(books) {
-    const tagFilter = books?.filter((k) => k?.tags.some((d) => d.name.toLowerCase().includes(searchText))) || [];
-    const authorFilter = books?.filter((k) => k?.authors.some((d) => d.name.toLowerCase().includes(searchText))) || [];
-    const genreFilter = books?.filter((k) => k?.genres.some((d) => d.name.toLowerCase().includes(searchText))) || [];
-    const titleFilter = books?.filter(k => k?.title.toLowerCase().includes(searchText)) || [];
-
-    const removedDuplicates = [...tagFilter, ...authorFilter, ...genreFilter, ...titleFilter].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
-    return removedDuplicates;
-  }
+  useEffect(() => {
+    if (searchText) {
+      const searchResult = bookData?.filter((book) => {
+        return book.title.toLowerCase().includes(searchText) ||
+          book.authors.some((author) => author.name.toLowerCase().includes(searchText)) ||
+          book.tags.some((tag) => tag.name.toLowerCase().includes(searchText)) ||
+          book.genres.some((genre) => genre.name.toLowerCase().includes(searchText))
+      })
+      setFilteredBooks(searchResult)
+    }
+  }, [bookData, searchText])
 
   return (
-    <MobileModal showWHiteBg={searchText ? true : false} visible={visible}>
-      <SearchWrap ref={header}>
+    <MobileModalWrapper showWHiteBg={searchText ? true : false} visible={visible}>
+      <SearchViewWrapper ref={header}>
         <ArrowWrap onClick={handleClose} />
-
         <Row width="80%">
           <WebSearchInput
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             placeholder="Books, genres, authors, etc."
           />
-          <SearchBtn onClick={() => setSearchText('')}>
-            {searchText ? <CloseSvg /> : <Search />}
-          </SearchBtn>
+          <SearchBtn onClick={() => setSearchText('')}>{searchText ? <CloseSvg /> : <Search />}</SearchBtn>
         </Row>
-      </SearchWrap>
+      </SearchViewWrapper>
 
       {searchText && alwaysOpen && (
         <Wrapper>
@@ -374,7 +355,7 @@ export const SearchModal = ({ visible, setVisible }) => {
           </BookPaddingContianer>
         </Wrapper>
       )}
-    </MobileModal>
+    </MobileModalWrapper>
   );
 }
 
@@ -408,7 +389,7 @@ export const WebSearchModal = ({ visible, setVisible }) => {
 
 
   return (
-    <WebModal visible={visible}>
+    <WebViewModalWrapper visible={visible}>
       <Navigation autoFocus={true} position="relative" />
       {searchText && alwaysOpen && (
         <Wrapper>
@@ -438,7 +419,7 @@ export const WebSearchModal = ({ visible, setVisible }) => {
           </BookPaddingContianer>
         </Wrapper>
       )}
-    </WebModal>
+    </WebViewModalWrapper>
   );
 };
 

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { screenSizes, colors } from '../utils/constants';
+import { screenSizes, colors } from '../constants';
 
 export const BookWrapper = styled.div`
   display: flex;
@@ -42,7 +42,7 @@ export const TitleWrappper = styled.div`
 `;
 
 export const BookPaddingContianer = styled.div`
-  padding: 20px 52px;
+  padding: 20px;
   margin-top: ${({ mt }) => mt || '65px'};
   
   background-color: white;

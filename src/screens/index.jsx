@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { CartModal, SearchModal, WebSearchModal } from '../components/Modal';
+import { CartModal, SearchModal, WebSearchModal } from '../components/Modals';
 import NavBar from '../components/Navigation';
 import { BookContext } from '../context/BookContext';
 import Home from './HomeScreen';

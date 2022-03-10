@@ -1,17 +1,18 @@
 import { useContext, useEffect } from 'react';
+import { useQuery } from '@apollo/client';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Carousel from 'nuka-carousel';
-import { screenSizes, colors } from '../utils/constants';
+
+import { screenSizes, colors } from '../constants';
 import { ReactComponent as PrevSvg } from '../assets/svgs/caretBack.svg';
 import { ReactComponent as NextSvg } from '../assets/svgs/caretForward.svg';
 import { useViewport } from '../hooks/useViewport';
-import { useQuery } from '@apollo/client'
 import { GET_BOOKS } from '../graphql/queries';
 import { BookContext } from '../context/BookContext';
-import { Link } from 'react-router-dom';
 import { Book } from '../components/Book';
 import { BookWrapper, BooksRowWrapper, BookPaddingContianer, TitleWrappper } from '../components/Containers';
-
+import { SkeletonLoader } from '../components/Skeleton';
 
 const HomeHeadCont = styled.div`
   margin-top: 120px;
@@ -90,9 +91,11 @@ const ImageCard = styled.img`
   }
 `;
 
+
+
 const HomeScreen = () => {
   const { setBookData, bookData } = useContext(BookContext);
-  const { loading, data } = useQuery(GET_BOOKS);
+  const { data, loading } = useQuery(GET_BOOKS);
 
   useEffect(() => {
     if (!loading) {
@@ -173,7 +176,9 @@ const HomeScreen = () => {
         </div>
       )}
     </HomeHeadCont>)
-  return <></>
+    return (
+      <SkeletonLoader />
+    )
 }
 
 export default HomeScreen;

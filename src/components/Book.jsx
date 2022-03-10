@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import StarRatings from 'react-star-ratings';
 import { Link } from 'react-router-dom';
 
-import { screenSizes, colors } from '../utils/constants';
+import { screenSizes, colors } from '../constants';
 import { BookWrapper } from './Containers';
 import { BookContext } from '../context/BookContext';
-import { addToCart, getAvailableCopies } from '../utils/helpers';
+import { addToCart, getAvailableCopies } from '../helpers';
 
 import { ReactComponent as PeopleSvg } from '../assets/svgs/people.svg';
 import { ReactComponent as HeartSvg } from '../assets/svgs/heart.svg';

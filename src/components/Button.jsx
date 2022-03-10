@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ReactComponent as CartSvg } from '../assets/svgs/cartWhite.svg';
-import { screenSizes, colors } from '../utils/constants';
+import { screenSizes, colors } from '../constants';
 
 const Button = styled.button`
   width: 100%;

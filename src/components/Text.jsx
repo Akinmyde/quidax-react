@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { colors } from '../utils/constants';
+import { colors } from '../constants';
 
 export const Text = styled.p`
   font-style: normal;
