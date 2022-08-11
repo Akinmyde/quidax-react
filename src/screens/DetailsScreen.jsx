@@ -1,21 +1,18 @@
+import { Link, useLocation } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ReactComponent as ArrowSvg } from '../assets/svgs/arrow.svg';
-import { ReactComponent as PeopleSvg } from '../assets/svgs/people.svg';
-import { ReactComponent as HeeartSvg } from '../assets/svgs/heart.svg';
 
 import { AddToCartButton } from '../components/Button';
 import { Text } from '../components/Text';
 import { colors, screenSizes } from '../constants';
-import StarRatings from 'react-star-ratings';
-import { GET_BOOK } from '../graphql/queries';
-import { useParams, Link } from 'react-router-dom';
-import { ReactComponent as CartSvg } from '../assets/svgs/cartWhite.svg';
-import { addToCart, getAvailableCopies, returnArrayText } from '../helpers';
+import { addToCart, getBookCount } from '../helpers';
 import { BookContext } from '../context/BookContext';
-import { useQuery } from '@apollo/client';
 import { useViewport } from '../hooks/useViewport';
+import AvailableCopies from '../components/AvailableCopies';
+import { Col } from '../components/Containers';
+import BookInformation from '../components/BookInformation';
 
 const DetailCont = styled.div`
    margin-top: 100px;
@@ -41,35 +38,6 @@ const DetailRow = styled.div`
   }
 `;
 
-const BookDetailsWrapper = styled.div`
-  width: 100%;
-  border-top: 1px solid ${colors.white1};
-  border-bottom: 1px solid ${colors.white1};
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-  padding: 10px 0;
-  @media (max-width: ${screenSizes.xlMobileScreen}) {
-    flex-direction: column;
-  }
-`;
-
-const BookDetailsFlex = styled.div`
-    display: flex;
-    flex-direction: ${({ direction }) => direction || 'row'};
-    gap: ${({ gap }) => gap || '5px'};
-    padding-left: ${({ paddingLeft }) => paddingLeft || 0};
-    justify-content: ${({ justifyContent }) => justifyContent || 'initial'};
-    width: ${({ width }) => width};
-    margin: ${({ margin }) => margin || 0}
-`;
-
-const Ruller = styled.div`
-  width: 1px;
-  height: 45px;
-  background-color: ${colors.white1};
-`;
-
 const BookCol = styled.div`
   flex:1;
 `;
@@ -81,12 +49,6 @@ const DetailCol = styled.div`
     padding-right: 10%;
     padding-left: 2%;
   }
-`;
-
-const Col = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: ${({ mt }) => mt || '0px'};
 `;
 
 const BookCoverImage = styled.img`
@@ -101,66 +63,29 @@ const BookCoverImage = styled.img`
   }
 `;
 
-const AddToCartButtonWrap = styled.button`
-  outline: none;
-  border: none;
-  background: ${colors.black};
-  box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.05);
-  padding: 19px; 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: fixed;
-  width: 85%;
-  bottom: 20px;
-  cursor: pointer;
-   @media (min-width: ${screenSizes.tabs}) {
-   display:none;
-  }
-`;
-
-
 const DetailsScreen = () => {
   const { cartData, setCartData } = useContext(BookContext);
-  const params = useParams();
+  const { state } = useLocation();
+  const { book } = state;
 
-  const { id } = params;
-  const { loading, data, error } = useQuery(GET_BOOK, { variables: { id: id } });
-  
   const [availableCopies, setAvailableCopies] = useState(0);
-  const [book, setBook] = useState({});
   const { width } = useViewport();
-
-  useEffect(() => {
-    if (!loading) {
-      setBook(data?.book)
-    }
-  }, [data, loading])
 
   const {
     image_url,
     title,
     subtitle,
-    rating,
     full_description,
     price,
-    available_copies,
-    likes,
-    number_of_purchases,
     published_at,
     authors,
-    release_date,
-    genres,
-    tags,
-    publisher,
   } = book || {};
 
   useEffect(() => {
-    const copies = parseInt(available_copies) - getAvailableCopies(cartData, book);
-    setAvailableCopies(copies)
-  }, [available_copies, book, cartData])
+    setAvailableCopies(getBookCount(book, cartData),)
+  }, [book, cartData])
 
-  return loading && error ? (
+  return !book ? (
     <></>
   ) : (
     <DetailCont>
@@ -185,11 +110,10 @@ const DetailsScreen = () => {
           )}
           {(width >= screenSizes.tabs && availableCopies !== 0) && (
             <AddToCartButton
-              onClick={() => addToCart(data.book || {}, cartData, setCartData)}
+              onClick={() => addToCart(book || {}, cartData, setCartData)}
             />
           )}
         </BookCol>
-
         <DetailCol>
           <Text size='28px' fontWeight="bold">{title}</Text>
           <Col>
@@ -201,141 +125,12 @@ const DetailsScreen = () => {
             </Text>
             <Text mt="7px">{new Date(published_at).getFullYear()}</Text>
           </Col>
-          <BookDetailsWrapper>
-            {width > screenSizes.largeMobileScreen ?
-              (
-                <div style={{ width: '100%', display: 'flex', gap: '10px' }} >
-                  <BookDetailsFlex>
-                    <BookDetailsFlex direction='column'>
-                      <PeopleSvg />
-                      <Text size='12px' textAlign="center">
-                        {number_of_purchases}
-                      </Text>
-                    </BookDetailsFlex>
-                    <BookDetailsFlex direction='column'>
-                      <HeeartSvg />
-                      <Text size='12px' textAlign="center">
-                        {likes}
-                      </Text>
-                    </BookDetailsFlex>
-                  </BookDetailsFlex>
-                  <Ruller />
-                  <BookDetailsFlex width='100%' justifyContent='space-between'>
-                    <BookDetailsFlex direction='column'>
-                      <Text fontWeight='bold'>Ratings: {rating}</Text>
-                      <StarRatings
-                        rating={rating}
-                        starRatedColor={colors.yellow}
-                        numberOfStars={5}
-                        starDimension={'15px'}
-                        starSpacing="2px"
-                        name="rating"
-                      />
-                    </BookDetailsFlex>
-                    <BookDetailsFlex direction='column'>
-                      <Text fontWeight="bold">Genre</Text>
-                      <Text>{returnArrayText(genres || [])}</Text>
-                    </BookDetailsFlex>
-                    <BookDetailsFlex direction='column'>
-                      <Text fontWeight="bold">Tags</Text>
-                      <Text>{returnArrayText(tags || [])}</Text>
-                    </BookDetailsFlex>
-                    <BookDetailsFlex direction='column'>
-                      <Text fontWeight="bold">Publisher</Text>
-                      <Text>{publisher}</Text>
-                    </BookDetailsFlex>
-                    <BookDetailsFlex direction='column'>
-                      <Text fontWeight="bold">Released</Text>
-                      <Text>
-                        {new Date(release_date).toDateString()}
-                      </Text>
-                    </BookDetailsFlex>
-                  </BookDetailsFlex>
-                </div>
-              ) :
-              (
-                <div style={{ width: '100%' }}>
-                  <BookDetailsFlex>
-                    <BookDetailsFlex direction='column'>
-                      <PeopleSvg />
-                      <Text size='12px' textAlign="center">
-                        {number_of_purchases}
-                      </Text>
-                    </BookDetailsFlex>
-                    <BookDetailsFlex direction='column'>
-                      <HeeartSvg />
-                      <Text size='12px' textAlign="center">
-                        {likes}
-                      </Text>
-                    </BookDetailsFlex>
-                    <Ruller />
-                    <BookDetailsFlex direction='column'>
-                      <Text fontWeight='bold'>Ratings: {rating}</Text>
-                      <StarRatings
-                        rating={rating}
-                        starRatedColor={colors.yellow}
-                        numberOfStars={5}
-                        starDimension={'15px'}
-                        starSpacing="2px"
-                        name="rating"
-                      />
-                    </BookDetailsFlex>
-                  </BookDetailsFlex>
-                  <BookDetailsFlex margin='30px 0' justifyContent='space-between'>
-                    <BookDetailsFlex gap='20px' direction='column' justifyContent='space-between'>
-                      <BookDetailsFlex direction='column'>
-                        <Text fontWeight="bold">Genre</Text>
-                        <Text>{returnArrayText(genres || [])}</Text>
-                      </BookDetailsFlex>
-                      <BookDetailsFlex direction='column'>
-                        <BookDetailsFlex direction='column'>
-                          <Text fontWeight="bold">Publisher</Text>
-                          <Text>{publisher}</Text>
-                        </BookDetailsFlex>
-                      </BookDetailsFlex>
-                    </BookDetailsFlex>
-                    <BookDetailsFlex direction='column' justifyContent='space-between'>
-                      <BookDetailsFlex direction='column'>
-                        <Text fontWeight="bold">Tags</Text>
-                        <Text>{returnArrayText(tags || [])}</Text>
-                      </BookDetailsFlex>
-                      <BookDetailsFlex direction='column'>
-                        <Text fontWeight="bold">Released</Text>
-                        <Text>
-                        {new Date(release_date).toDateString()}
-                        </Text>
-                      </BookDetailsFlex>
-                    </BookDetailsFlex>
-                  </BookDetailsFlex>
-                </div>
-              )
-            }
-          </BookDetailsWrapper>
-
+          <BookInformation book={book} />
           <Text fontWeight='bold' mt='62px' lineHeight='150%'>{subtitle}</Text>
           <Text mt='12px' lineHeight='150%'>{full_description}</Text>
         </DetailCol>
       </DetailRow>
-      {(width < screenSizes.laptops) &&
-        availableCopies !== 0 && (
-          <AddToCartButtonWrap
-            onClick={() => addToCart(data.book || {}, cartData, setCartData)}
-          >
-            <CartSvg />
-            <Col>
-              <Text size='12px' fontWeight="bold" color="white">
-                Add to Cart
-              </Text>
-              <Text size='12px' color={colors.green}>
-                {availableCopies} Copies Available
-              </Text>
-            </Col>
-            <Text size='28px' fontWeight="300" color="white">
-              ${price}
-            </Text>
-          </AddToCartButtonWrap>
-        )
-      }
+      <AvailableCopies book={book} availableCopies={availableCopies} />
     </DetailCont>
   );
 }

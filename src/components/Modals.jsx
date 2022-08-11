@@ -390,7 +390,7 @@ export const WebSearchModal = ({ visible, setVisible }) => {
 
   return (
     <WebViewModalWrapper visible={visible}>
-      <Navigation autoFocus={true} position="relative" />
+      {/* <Navigation autoFocus={true} position="relative" />
       {searchText && alwaysOpen && (
         <Wrapper>
           <BookPaddingContianer
@@ -418,7 +418,7 @@ export const WebSearchModal = ({ visible, setVisible }) => {
             </BooksRowWrapper>
           </BookPaddingContianer>
         </Wrapper>
-      )}
+      )} */}
     </WebViewModalWrapper>
   );
 };

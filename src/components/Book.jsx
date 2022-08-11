@@ -88,14 +88,14 @@ export const Book = ({ top, book, handleClose }) => {
 
   return (
     <BookWrapper top={top}>
-      <Link to={`/details/${book.id}`}>
+      <Link to={`/details/${book.id}`} state={{ book }}>
         <div onClick={() => handleClose && handleClose()}>
           <Image src={image_url} />
         </div>
       </Link>
       <div onClick={() => handleClose && handleClose()}>
         <FlexWrapper>
-          <Link to={`/details/${book.id}`}>
+          <Link to={`/details/${book.id}`} state={{ book }}>
             <Title>{title}</Title>
             <Author top="6px">
               {authors.map(

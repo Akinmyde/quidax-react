@@ -52,3 +52,9 @@ export const BookPaddingContianer = styled.div`
     margin-top: 29px;
   }
 `;
+
+export const Col = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: ${({ mt }) => mt || '0px'};
+`;

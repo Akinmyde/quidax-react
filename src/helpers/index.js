@@ -24,22 +24,26 @@ export const getAvailableCopies = (cartData, cartItem) => {
 };
 
 export const returnArrayText = (arr) => {
-  if(arr.length > 0) {
+  if (arr.length > 0) {
     let formattedString = ''
     for (const { name } of arr) {
-        if (formattedString.length !== 0) {
-            formattedString = `${formattedString}, ${name}`;
-        } else {
-            formattedString = `${name}`;
-        }
+      if (formattedString.length !== 0) {
+        formattedString = `${formattedString}, ${name}`;
+      } else {
+        formattedString = `${name}`;
+      }
     }
     return formattedString;
   }
-  }
+}
 
-export  const removeFromCart = (cartData, item, setCartData) => {
-    const filterItemFromCart = cartData.filter(
-      (cartItem) => cartItem?.id !== item?.id
-    );
-    setCartData([...filterItemFromCart]);
-  };
+export const removeFromCart = (cartData, item, setCartData) => {
+  const filterItemFromCart = cartData.filter(
+    (cartItem) => cartItem?.id !== item?.id
+  );
+  setCartData([...filterItemFromCart]);
+};
+
+export const getBookCount = (book, cartData) => {
+  return parseInt(book.available_copies) - getAvailableCopies(cartData, book);
+}

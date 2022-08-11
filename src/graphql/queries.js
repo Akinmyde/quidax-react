@@ -3,7 +3,9 @@ import { gql } from '@apollo/client';
 export const GET_BOOKS = gql`
   query {
     books {
-      id, 
+        id, 
+        created_at
+        updated_at
         image_url, 
         title, 
         subtitle, 
