@@ -85,7 +85,7 @@ const MobileSearch = ({ visible, setVisible }) => {
           <Row width="80%">
             <SearchInput
               value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
+              onChange={(e) => setSearchText(e.target.value?.toLowerCase())}
               placeholder="Books, genres, authors, etc."
             />
             <SearchBtn onClick={() => setSearchText('')}>{searchText ? <CloseSvg /> : <Search />}</SearchBtn>

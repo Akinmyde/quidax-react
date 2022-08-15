@@ -52,10 +52,10 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (searchText.length > 0) {
-      const tagFilter = bookData?.filter((k) => k?.tags.some((d) => d.name.toLowerCase().includes(searchText))) || [];
-      const authorFilter = bookData?.filter((k) => k?.authors.some((d) => d.name.toLowerCase().includes(searchText))) || [];
-      const genreFilter = bookData?.filter((k) => k?.genres.some((d) => d.name.toLowerCase().includes(searchText))) || [];
-      const titleFilter = bookData?.filter(k => k?.title.toLowerCase().includes(searchText)) || [];
+      const tagFilter = bookData?.filter(book => book?.tags.some((tag) => tag.name.toLowerCase().includes(searchText)));
+      const authorFilter = bookData?.filter(book => book?.authors.some((tag) => tag.name.toLowerCase().includes(searchText)));
+      const genreFilter = bookData?.filter(book => book?.genres.some((tag) => tag.name.toLowerCase().includes(searchText)));
+      const titleFilter = bookData?.filter(book => book?.title.toLowerCase().includes(searchText));
 
       // Use the new set to remove duplicates
       const booksWithoutDuplicates = [...new Set([...tagFilter, ...authorFilter, ...genreFilter, ...titleFilter])];
