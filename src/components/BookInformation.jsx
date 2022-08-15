@@ -14,7 +14,7 @@ const BookDetailsFlex = styled.div`
     gap: ${({ gap }) => gap || '5px'};
     padding-left: ${({ paddingLeft }) => paddingLeft || 0};
     justify-content: ${({ justifyContent }) => justifyContent || 'initial'};
-    width: ${({ width }) => width};
+    width: ${({ width }) => width || 'auto'};
     margin: ${({ margin }) => margin || 0}
 `;
 
@@ -102,4 +102,4 @@ const BookInformation = ({ book }) => {
     )
 }
 
-export default BookInformation;
+export default BookInformation

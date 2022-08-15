@@ -1,10 +1,11 @@
 import React, { useContext } from 'react'
-import { CartModal, SearchModal, WebSearchModal } from '../components/Modals';
+import { CartModal } from '../components/CartModals';
 import NavBar from '../components/Navigation';
 import { BookContext } from '../context/BookContext';
 import HomeScreen from './HomeScreen';
 import BookDetails from './DetailsScreen';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
+import MobileSearch from '../components/MobileSearch';
 
 const Screens = () => {
   const {
@@ -12,8 +13,6 @@ const Screens = () => {
     setShowSearchModal,
     showCartModal,
     showShowCartModal,
-    searchText,
-    setSearchText
   } = useContext(BookContext);
 
   return (
@@ -24,8 +23,7 @@ const Screens = () => {
             <Route exact path="/" element={<HomeScreen />} />
             <Route path="/details/:id" element={<BookDetails />} />
           </Routes>
-        <SearchModal visible={showSearchModal} setVisible={setShowSearchModal} />
-        <WebSearchModal visible={searchText ? true : false} setVisible={() => setSearchText('')} />
+        <MobileSearch visible={showSearchModal} setVisible={setShowSearchModal} />
         <CartModal visible={showCartModal} setVisible={showShowCartModal} />
       </>
     </Router>

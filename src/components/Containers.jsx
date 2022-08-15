@@ -27,7 +27,7 @@ export const BooksRowWrapper = styled.div`
   margin-top: ${({ mt }) => mt || '0px'}};
   border-right: ${({ br }) => br ? `1px solid ${colors.red1}` : 'none'}};
   align-items: center;
-  flex-wrap: ${({ wrap }) => wrap ? 'wrap' : 'no-wrap'};
+  flex-wrap: ${({ wrap }) => wrap || 'no-wrap'};
   justify-content: ${({ jc }) => jc || 'initial'};
 `;
 
@@ -57,4 +57,28 @@ export const Col = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: ${({ mt }) => mt || '0px'};
+  justify-content: ${({ jc }) => jc || 'initial'};
+`;
+
+export const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: ${({ alignItems }) => alignItems || 'center'};
+  justify-content: ${({ jc }) => jc || 'center'};
+  width: ${({ width }) => width || 'auto'};
+  cursor: ${({ cursor }) => cursor || 'auto'};
+  margin-top: ${({ mt }) => mt || '0px'};
+`;
+
+export const ModalContainer = styled.div`
+  position: fixed;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  @media (max-width: ${screenSizes.tabs}px) {
+    display:none;
+  }
 `;

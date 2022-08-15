@@ -8,6 +8,7 @@ export const Text = styled.p`
   color: ${({ color }) => color || colors.black};
   margin-left: ${({ ml }) => ml || '0px'};
   margin-top: ${({ mt }) => mt || '0px'};
+  margin-bottom: ${({ mb }) => mb || '0px'};
   text-align: ${({ textAlign }) => textAlign || 'left'};
   line-height: ${({ lineHeight }) => lineHeight};
 `;

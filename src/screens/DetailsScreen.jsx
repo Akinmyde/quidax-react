@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { ReactComponent as ArrowSvg } from '../assets/svgs/arrow.svg';
@@ -68,7 +68,6 @@ const DetailsScreen = () => {
   const { state } = useLocation();
   const { book } = state;
 
-  const [availableCopies, setAvailableCopies] = useState(0);
   const { width } = useViewport();
 
   const {
@@ -81,9 +80,9 @@ const DetailsScreen = () => {
     authors,
   } = book || {};
 
-  useEffect(() => {
-    setAvailableCopies(getBookCount(book, cartData),)
-  }, [book, cartData])
+  const availableCopies = useMemo(() => {
+    return getBookCount(book, cartData)
+  }, [book, cartData]);
 
   return !book ? (
     <></>

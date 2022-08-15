@@ -1,7 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as Search } from '../assets/svgs/search.svg';
-import { ReactComponent as CloseSvg } from '../assets/svgs/close.svg';
 import { ReactComponent as MinusSvg } from '../assets/svgs/minus.svg';
 import { ReactComponent as PlusSvg } from '../assets/svgs/plus.svg';
 import { ReactComponent as CartSvg } from '../assets/svgs/cart.svg';
@@ -9,36 +7,9 @@ import { ReactComponent as ArrowSvg } from '../assets/svgs/arrow.svg';
 import { gsap } from 'gsap';
 import { screenSizes, colors } from '../constants';
 import { CheckoutButton } from './Button';
-import { HeadTitle } from '../screens/HomeScreen';
 import { BookContext } from '../context/BookContext';
-import Navigation from './Navigation';
-import { getAvailableCopies, removeFromCart } from '../helpers';
-import { Book } from './Book';
-import { BookWrapper, BooksRowWrapper, TitleWrappper, BookPaddingContianer } from './Containers';
-
-const ModalContainer = styled.div`
-  position: fixed;
-  z-index: 2;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  @media (max-width: ${screenSizes.tabs}px) {
-    display:none;
-  }
-`;
-
-
-const MobileModalWrapper = styled(ModalContainer)`
-  display: ${({ visible }) => (visible ? 'block' : 'none')};
-  background-color: ${({ showWHiteBg }) => showWHiteBg ? 'rgba(255, 255, 255, 0)' : 'rgba(0, 0, 0, 0.4)'} ;
-`;
-
-const WebViewModalWrapper = styled(ModalContainer)`
-  display: ${({ visible }) => (visible ? 'block' : 'none')};
-  background-color: rgba(255, 255, 255, 1);
-`;
+import { getBookCount, removeFromCart } from '../helpers';
+import { Col, ModalContainer, Row } from './Containers';
 
 const CartModalWrap = styled(ModalContainer)`
   display: ${({ visible }) => (visible ? 'flex' : 'none')};
@@ -46,25 +17,6 @@ const CartModalWrap = styled(ModalContainer)`
   background-color: rgba(0, 0, 0, 0.4);
   justify-content: flex-end;
   flex-direction: column;
-`;
-
-const SearchViewWrapper = styled.div`
-  width: 90%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background: ${colors.white};
-  border: 1px solid ${colors.red1};
-  box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.05);
-  position: fixed;
-  z-index:99;
-  @media (min-width: ${screenSizes.largeMobileScreen}px) and (max-width: ${screenSizes.tabs}px) {
-    width: 91%;
-  }
-  @media (max-width: ${screenSizes.mediumMobileScreen}px) {
-    width: 89%;
-  }
 `;
 
 const CartCont = styled.div`
@@ -100,44 +52,8 @@ const CartNavCont = styled.div`
   }
 `;
 
-const ArrowWrap = styled(ArrowSvg)`
+export const ArrowWrap = styled(ArrowSvg)`
   cursor: pointer;
-`;
-
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: ${({ alignItems }) => alignItems || 'center'};
-  justify-content: ${({ jc }) => jc || 'center'};
-  width: ${({ width }) => width || 'auto'};
-  cursor: ${({ cursor }) => cursor || 'auto'};
-  margin-top: ${({ mt }) => mt || '0px'};
-`;
-
-const WebSearchInput = styled.input`
-  background: ${colors.white};
-  border: 1px solid ${colors.grey};
-  border-right: none;
-  padding-left: 21px;
-  padding-right: 21px;
-  height: 36px;
-  width: 100%;
-  :focus {
-    outline: none;
-  }
-`;
-
-const SearchBtn = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${colors.blue};
-  border: 1px solid ${colors.grey};
-  padding-left: 12px;
-  padding-right: 12px;
-  height: 40px;
-  outline: none;
-  cursor:pointer;
 `;
 
 const BackText = styled.p`
@@ -182,12 +98,6 @@ const CartImage = styled.img`
   width: 60px;
   object-fit: cover;
   margin-right: 10px;
-`;
-
-const Col = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: ${({ jc }) => jc || 'initial'};
 `;
 
 const CartItemTitle = styled.p`
@@ -270,159 +180,6 @@ const SubtotalWrap = styled.div`
     margin-top: 38px;
 `;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: 0px auto;
-  height: 720%;
-`;
-
-
-export const SearchModal = ({ visible, setVisible }) => {
-  const header = React.createRef();
-  const alwaysOpen = true;
-  const { searchText, setSearchText, bookData } = useContext(BookContext);
-
-  const [filteredBooks, setFilteredBooks] = useState([]);
-
-  useEffect(() => {
-    gsap.fromTo(header.current, { y: -100 }, { y: 0 });
-  }, [header, visible]);
-
-  const handleClose = () => {
-    gsap.fromTo(header.current, { y: 0 }, { y: -100 });
-    setVisible(false);
-  }
-
-  useEffect(() => {
-    if (searchText) {
-      const searchResult = bookData?.filter((book) => {
-        return book.title.toLowerCase().includes(searchText) ||
-          book.authors.some((author) => author.name.toLowerCase().includes(searchText)) ||
-          book.tags.some((tag) => tag.name.toLowerCase().includes(searchText)) ||
-          book.genres.some((genre) => genre.name.toLowerCase().includes(searchText))
-      })
-      setFilteredBooks(searchResult)
-    }
-  }, [bookData, searchText])
-
-  return (
-    <MobileModalWrapper showWHiteBg={searchText ? true : false} visible={visible}>
-      <SearchViewWrapper ref={header}>
-        <ArrowWrap onClick={handleClose} />
-        <Row width="80%">
-          <WebSearchInput
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Books, genres, authors, etc."
-          />
-          <SearchBtn onClick={() => setSearchText('')}>{searchText ? <CloseSvg /> : <Search />}</SearchBtn>
-        </Row>
-      </SearchViewWrapper>
-
-      {searchText && alwaysOpen && (
-        <Wrapper>
-          <BookPaddingContianer
-            ptL="90px"
-            height="100%"
-            mt="0px"
-            mtm="0px"
-            ptm="90px"
-          >
-            <TitleWrappper>
-              <HeadTitle fontWeight="normal">
-                <span style={{ fontWeight: 'bold' }}>
-                  {filteredBooks.length} results{' '}
-                </span>{' '}
-                found for{' '}
-                <span style={{ fontWeight: 'bold' }}>
-                  `{searchText}`
-                </span>
-              </HeadTitle>
-            </TitleWrappper>
-
-            <BooksRowWrapper jc="space-between" wrap>
-              {filteredBooks.map((f, index) => (
-                <Book
-                  top="40px"
-                  book={f}
-                  key={index + 'search'}
-                  handleClose={handleClose}
-                />
-              ))}
-            </BooksRowWrapper>
-          </BookPaddingContianer>
-        </Wrapper>
-      )}
-    </MobileModalWrapper>
-  );
-}
-
-export const WebSearchModal = ({ visible, setVisible }) => {
-  const content = React.createRef();
-  const { searchText, bookData } = useContext(BookContext);
-  const alwaysOpen = true;
-
-  useEffect(() => {
-    gsap.fromTo(content.current, { y: 1000 }, { y: 0 });
-  }, [content, visible]);
-
-  const handleClose = () => {
-    setTimeout(() => {
-      setVisible(false);
-    }, 400);
-  };
-
-  const filteredBooks = applyFilters(bookData) || [];
-
-
-  function applyFilters(books) {
-    const tagFilter = books?.filter((k) => k?.tags.some((d) => d.name.toLowerCase().includes(searchText))) || [];
-    const authorFilter = books?.filter((k) => k?.authors.some((d) => d.name.toLowerCase().includes(searchText))) || [];
-    const genreFilter = books?.filter((k) => k?.genres.some((d) => d.name.toLowerCase().includes(searchText))) || [];
-    const titleFilter = books?.filter(k => k?.title.toLowerCase().includes(searchText)) || [];
-
-    const removedDuplicates = [...tagFilter, ...authorFilter, ...genreFilter, ...titleFilter].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
-    return removedDuplicates;
-  }
-
-
-  return (
-    <WebViewModalWrapper visible={visible}>
-      {/* <Navigation autoFocus={true} position="relative" />
-      {searchText && alwaysOpen && (
-        <Wrapper>
-          <BookPaddingContianer
-            ref={content}
-            ptL="0px"
-            height="100%"
-            mt="0px"
-            mtm="0px"
-            ptm="90px"
-          >
-            <TitleWrappper>
-              <HeadTitle fontWeight="normal">
-                <span style={{ fontWeight: 'bold' }}>{filteredBooks.length} results </span> found for{' '}
-                <span style={{ fontWeight: 'bold' }}>
-                  `{searchText}`
-                </span>
-              </HeadTitle>
-            </TitleWrappper>
-
-            <BooksRowWrapper jc="space-between" wrap>
-              {filteredBooks.map((f, index) => (
-                <Book top="40px" book={f} key={index + 'search'} handleClose={handleClose} />
-              ))}
-              <BookWrapper mt="0px" />
-            </BooksRowWrapper>
-          </BookPaddingContianer>
-        </Wrapper>
-      )} */}
-    </WebViewModalWrapper>
-  );
-};
-
 const CartItem = ({ data, index }) => {
   const { title, authors, quantity, price, image_url } = data;
   const { setCartData, cartData } = useContext(BookContext);
@@ -464,8 +221,9 @@ const CartItem = ({ data, index }) => {
 
 const CartCounter = ({ quantity, data, index }) => {
   const { setCartData, cartData } = useContext(BookContext);
-  const { available_copies } = data;
-  const actualCopiesAvailable = parseInt(available_copies) - getAvailableCopies(cartData, data);
+  const actualCopiesAvailable = useMemo(() => {
+    return getBookCount(data, cartData)
+  }, [data, cartData]);
 
 
   const decreaseQuantity = () => {
@@ -501,15 +259,14 @@ const CartCounter = ({ quantity, data, index }) => {
   );
 };
 
-
 export const CartModal = ({ visible, setVisible }) => {
   const searchHeader = React.createRef();
   const { cartData } = useContext(BookContext);
 
-
   useEffect(() => {
-    gsap.fromTo(searchHeader.current, { x: 500 }, { x: 0 });
-  }, [searchHeader, visible]);
+      gsap.fromTo(searchHeader.current, { x: 500 }, { x: 0 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
 
   const handleClose = () => {
     gsap.fromTo(searchHeader.current, { x: 0 }, { x: 500 });

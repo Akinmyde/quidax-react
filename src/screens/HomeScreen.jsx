@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import styled from 'styled-components';
 
@@ -37,35 +37,54 @@ const Padded = styled.div`
 
 
 const HomeScreen = () => {
-  const { setBookData, bookData } = useContext(BookContext);
+  const { setBookData, bookData, searchText } = useContext(BookContext);
+  const [filteredBooks, setFilteredBooks] = useState(bookData)
   const { data, loading } = useQuery(GET_BOOKS);
 
   useEffect(() => {
     if (!loading) {
       setBookData(data?.books)
+      setFilteredBooks(data?.books)
     } else {
       setBookData([])
     }
   }, [data, loading, setBookData])
 
+  useEffect(() => {
+    if (searchText.length > 0) {
+      const tagFilter = bookData?.filter((k) => k?.tags.some((d) => d.name.toLowerCase().includes(searchText))) || [];
+      const authorFilter = bookData?.filter((k) => k?.authors.some((d) => d.name.toLowerCase().includes(searchText))) || [];
+      const genreFilter = bookData?.filter((k) => k?.genres.some((d) => d.name.toLowerCase().includes(searchText))) || [];
+      const titleFilter = bookData?.filter(k => k?.title.toLowerCase().includes(searchText)) || [];
+
+      // Use the new set to remove duplicates
+      const booksWithoutDuplicates = [...new Set([...tagFilter, ...authorFilter, ...genreFilter, ...titleFilter])];
+      setFilteredBooks(booksWithoutDuplicates)
+    } else {
+      setFilteredBooks(bookData)
+    }
+  }, [bookData, searchText])
+
   if (!loading) return (
     <HomeHeadCont>
-      <Padded>
-        <TitleWrappper>
-          <HeadTitle>Featured Books</HeadTitle>
-        </TitleWrappper>
-      </Padded>
+      {!searchText && (
+        <Padded>
+          <TitleWrappper>
+            <HeadTitle>Featured Books</HeadTitle>
+          </TitleWrappper>
+        </Padded>
+      )}
 
       {bookData?.length && (
         <>
-          <Slider bookData={bookData} />
+          {!searchText && <Slider bookData={bookData} />}
           <BookPaddingContianer>
             <TitleWrappper>
-              <HeadTitle>All Books</HeadTitle>
+              <HeadTitle>{searchText ? `${filteredBooks.length} result(s) found for ${searchText}` : "All Books"}</HeadTitle>
             </TitleWrappper>
 
-            <BooksRowWrapper jc="space-between" wrap>
-              {bookData.map((book) => <Book key={book.id} book={book} />)}
+            <BooksRowWrapper jc="space-between" wrap='wrap'>
+              {filteredBooks.map((book) => <Book key={book.id} book={book} />)}
               <BookWrapper />
             </BooksRowWrapper>
           </BookPaddingContianer>

@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useMemo } from 'react';
 import styled from 'styled-components';
 import StarRatings from 'react-star-ratings';
 import { Link } from 'react-router-dom';
@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { screenSizes, colors } from '../constants';
 import { BookWrapper } from './Containers';
 import { BookContext } from '../context/BookContext';
-import { addToCart, getAvailableCopies } from '../helpers';
+import { addToCart, getBookCount } from '../helpers';
 
 import { ReactComponent as PeopleSvg } from '../assets/svgs/people.svg';
 import { ReactComponent as HeartSvg } from '../assets/svgs/heart.svg';
@@ -70,7 +70,6 @@ export const Book = ({ top, book, handleClose }) => {
     title,
     rating,
     price,
-    available_copies,
     likes,
     number_of_purchases,
     published_at,
@@ -79,12 +78,10 @@ export const Book = ({ top, book, handleClose }) => {
   } = book;
 
   const { cartData, setCartData } = useContext(BookContext);
-  const [availableCopies, setAvailableCopies] = useState(available_copies);
 
-  useEffect(() => {
-    const copies = parseInt(available_copies) - getAvailableCopies(cartData, book);
-    setAvailableCopies(copies)
-  }, [available_copies, book, cartData])
+  const availableCopies = useMemo(() => {
+    return getBookCount(book, cartData)
+  }, [book, cartData]);
 
   return (
     <BookWrapper top={top}>

@@ -1,4 +1,6 @@
 import React, { useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+
 import styled from 'styled-components';
 import { ReactComponent as Logo } from '../assets/svgs/brand-icon.svg';
 import { ReactComponent as Search } from '../assets/svgs/search.svg';
@@ -7,7 +9,6 @@ import { ReactComponent as CartSvg } from '../assets/svgs/cart.svg';
 import { ReactComponent as CloseSvg } from '../assets/svgs/close.svg';
 import { screenSizes, colors } from '../constants';
 import { BookContext } from '../context/BookContext';
-import { Link } from 'react-router-dom';
 
 
 const NavWrapper = styled.nav`
@@ -166,8 +167,8 @@ const MobileSearch = styled(Search)`
 
 
 const NavBar = ({ position, autoFocus }) => {
-  const { setShowSearchModal, showShowCartModal, searchText, setSearchText, cartData } =
-    useContext(BookContext);
+  const location = useLocation();
+  const { setShowSearchModal, showShowCartModal, searchText, setSearchText, cartData } = useContext(BookContext);
 
   return (
     <NavWrapper position={position}>
@@ -181,26 +182,30 @@ const NavBar = ({ position, autoFocus }) => {
         </Row>
       </Link>
 
-      <SearchWrap>
-        <Row width="70%">
-          <WebSearchInput
-            value={searchText}
-            autoFocus={autoFocus || false}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Search books, genres, authors, etc."
-          />
-          <SearchBtn onClick={() => setSearchText('')}>
-            {searchText ? <CloseSvg /> : <Search />}
-          </SearchBtn>
-        </Row>
-      </SearchWrap>
+      {location.pathname === '/' && (
+        <SearchWrap>
+          <Row width="70%">
+            <WebSearchInput
+              value={searchText}
+              autoFocus={autoFocus || false}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="Search books, genres, authors, etc."
+            />
+            <SearchBtn onClick={() => setSearchText('')}>
+              {searchText ? <CloseSvg /> : <Search />}
+            </SearchBtn>
+          </Row>
+        </SearchWrap>
+      )}
 
       <Row>
-        <MobileSearch
-          onClick={() => {
-            setShowSearchModal(true);
-          }}
-        />
+        {location.pathname === '/' && (
+          <MobileSearch
+            onClick={() => {
+              setShowSearchModal(true);
+            }}
+          />
+        )}
         <BookSvg />
         <CartWrap onClick={() => showShowCartModal(true)}>
           <CartIcon />

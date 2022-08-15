@@ -1,13 +1,13 @@
+import { useEffect, useState } from 'react';
 import Carousel from 'nuka-carousel';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import { colors, screenSizes } from '../constants';
-import { ReactComponent as PrevSvg } from '../assets/svgs/caretBack.svg';
-import { ReactComponent as NextSvg } from '../assets/svgs/caretForward.svg';
-
 import { useViewport } from '../hooks/useViewport';
 
+import { ReactComponent as PrevSvg } from '../assets/svgs/caretBack.svg';
+import { ReactComponent as NextSvg } from '../assets/svgs/caretForward.svg';
 
 const SwiperPrevBtn = styled.div`
   background: linear-gradient(
@@ -26,6 +26,7 @@ const SwiperPrevBtn = styled.div`
   height: 330px;
   mix-blend-mode: normal;
   opacity: 0.8;
+  cursor: pointer;
   @media (max-width: ${screenSizes.largeMobileScreen}px) {
     height: 230px;
   }
@@ -48,6 +49,7 @@ const SwiperNextBtn = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
   @media (max-width: ${screenSizes.largeMobileScreen}px) {
     height: 230px;
   }
@@ -55,7 +57,7 @@ const SwiperNextBtn = styled.div`
 
 const ImageCard = styled.img`
   height: 324px;
-  width: auto;
+  width: 240px;
   object-fit: cover;
   @media (max-width: ${screenSizes.largeMobileScreen}px) {
     height: 221px;
@@ -65,30 +67,39 @@ const ImageCard = styled.img`
 
 const Slider = ({ bookData }) => {
     const { width } = useViewport();
+    const [cellSpacing, setSellSpacing] = useState(10);
+    const [slideShowSize, setSlideShowSize] = useState(4.5);
 
+    useEffect(() => {
+        if (width >= screenSizes.largeMobileScreen && width <= screenSizes.tabs) {
+            setSellSpacing(15)
+        } else if (width >= screenSizes.largeLaptops && width <= screenSizes.desktops) {
+            setSellSpacing(10)
+        } else {
+            setSellSpacing(5)
+        }
+    }, [width])
+
+    useEffect(() => {
+        if(width >= screenSizes.largeLaptops && width <= screenSizes.desktops) {
+            setSlideShowSize(5)
+        } else if (width >= parseInt(screenSizes.largeLaptops)) {
+            setSlideShowSize(8)
+        } else if (width >= screenSizes.laptops && width <= screenSizes.largeLaptops) {
+            setSlideShowSize(4.5)
+        } else if (width >= screenSizes.tabs && width <= screenSizes.largeLaptops) {
+            setSlideShowSize(3)
+        } else if (width >= screenSizes.largeMobileScreen && width <= screenSizes.tabs) {
+            setSlideShowSize(2.3)
+        } else {
+            setSlideShowSize(2.5)
+        }
+    }, [width])
     return (
         <Carousel
-            cellSpacing={
-                width >= screenSizes.largeMobileScreen && width <= screenSizes.tabs
-                    ? 15
-                    : width >= screenSizes.largeLaptops && width <= screenSizes.desktops
-                        ? 10
-                        : 5
-            }
+            cellSpacing={cellSpacing}
             autoplay
-            slidesToShow={
-                width >= screenSizes.largeLaptops && width <= screenSizes.desktops
-                    ? 5
-                    : width >= parseInt(screenSizes.largeLaptops)
-                        ? 8
-                        : width >= screenSizes.laptops && width <= screenSizes.largeLaptops
-                            ? 4.5
-                            : width >= screenSizes.tabs && width <= screenSizes.largeLaptops
-                                ? 3
-                                : width >= screenSizes.largeMobileScreen && width <= screenSizes.tabs
-                                    ? 2.3
-                                    : 2.5
-            }
+            slidesToShow={slideShowSize}
             slidesToScroll={1}
             renderCenterLeftControls={({ previousSlide }) => (
                 <SwiperPrevBtn onClick={previousSlide}>
